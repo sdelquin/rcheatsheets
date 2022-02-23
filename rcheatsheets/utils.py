@@ -1,6 +1,7 @@
 import re
 
 import logzero
+import requests
 
 import settings
 
@@ -29,3 +30,14 @@ def init_logger():
         formatter=file_formatter,
     )
     return logzero.logger
+
+
+def is_valid_response(response):
+    if response.status_code != requests.codes.ok:
+        return False, f'Status code: {response.status_code}'
+    if (content_type := response.headers['Content-Type']) not in (
+        'application/octet-stream',
+        'application/pdf',
+    ):
+        return False, f'Incompatible Content-Type: {content_type}'
+    return True, 'Success'

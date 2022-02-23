@@ -4,3 +4,4 @@ pypdf2
 prettyconf
 typer
 logzero
+pikepdf
