@@ -7,6 +7,8 @@ import PyPDF2
 import requests
 from bs4 import BeautifulSoup
 
+import settings
+
 
 class RCheatSheet:
     def __init__(self, url, output_dir):
@@ -22,9 +24,9 @@ class RCheatSheet:
 
 
 class Handler:
-    def __init__(self, url, book_filename):
+    def __init__(self, url=settings.CHEATSHEETS_URL, book_path=settings.BOOK_PATH):
         self.url = url
-        self.book = Path(book_filename)
+        self.book = Path(book_path)
         self.cheatsheets = []
 
     def get_cheatsheet_links(self):
