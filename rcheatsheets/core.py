@@ -24,10 +24,16 @@ class RCheatSheet:
 
 
 class Handler:
-    def __init__(self, url=settings.CHEATSHEETS_URL, book_path=settings.BOOK_PATH):
+    def __init__(
+        self,
+        url=settings.CHEATSHEETS_URL,
+        book_path=settings.BOOK_PATH,
+        max_cheatsheets=None,
+    ):
         self.url = url
         self.book = Path(book_path)
         self.cheatsheets = []
+        self.max_cheatsheets = max_cheatsheets
 
     def get_cheatsheet_links(self):
         response = requests.get(self.url)
@@ -45,6 +51,6 @@ class Handler:
 
     def build(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
-            for url in islice(self.get_cheatsheet_links(), 4):
+            for url in islice(self.get_cheatsheet_links(), self.max_cheatsheets):
                 self.cheatsheets.append(RCheatSheet(url, tmpdirname))
             self.merge_cheatsheets()
