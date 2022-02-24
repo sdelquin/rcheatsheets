@@ -50,18 +50,28 @@ class RCheatSheet:
                 self.download()
             return False
 
-    def repair(self):
-        '''https://github.com/mstamy2/PyPDF2/issues/183#issuecomment-897334512'''
-        logger.warning(f'Repairing {self}')
-        pdf = pikepdf.open(self.path, allow_overwriting_input=True)
-        pdf.save(self.path)
+    def read(self, repair):
+        logger.debug(f'Reading contents from {self}')
+        if repair:
+            logger.debug(f'Repairing {self}')
+            pdf = pikepdf.open(self.path, allow_overwriting_input=True)
+            pdf.save(self.path)
+        self.contents = PyPDF2.PdfFileReader(self.path, 'rb')
 
-    def read_pdf(self):
-        try:
-            return PyPDF2.PdfFileReader(self.path, 'rb')
-        except PyPDF2.utils.PdfReadError:
-            self.repair()
-            return PyPDF2.PdfFileReader(self.path, 'rb')
+    def scale(self, width, height):
+        logger.debug(f'Scaling {self} to {width}x{height}')
+        writer = PyPDF2.PdfFileWriter()
+        for page in self.contents.pages:
+            page.scaleTo(width, height)
+            writer.addPage(page)
+        with open(self.path, 'wb') as f:
+            writer.write(f)
+
+    def stage(self, width=settings.PAGE_WIDTH, height=settings.PAGE_HEIGHT):
+        logger.info(f'Staging {self}')
+        self.read(repair=True)
+        self.scale(width, height)
+        self.read(repair=False)
 
     def __str__(self):
         return self.file.name
@@ -86,20 +96,14 @@ class Handler:
         download_links = soup.find_all('a', string='Download')
         for link in download_links:
             if (url := link['href']).endswith('.pdf'):
-                # if url.endswith('base-r.pdf'):
                 yield url
 
     def merge_cheatsheets(self):
         logger.info('Merging cheatsheets')
         merged_file = PyPDF2.PdfFileMerger()
         for rcs in self.cheatsheets:
-            logger.debug(rcs)
-            # if str(rcs).endswith('base-r.pdf'):
-            try:
-                merged_file.append(rcs.read_pdf())
-            except ValueError:
-                rcs.repair()
-                merged_file.append(rcs.read_pdf())
+            rcs.stage()
+            merged_file.append(rcs.contents)
 
         logger.debug(f'Writing compilation book to {self.book}')
         merged_file.write(str(self.book))
