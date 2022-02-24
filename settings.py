@@ -17,3 +17,5 @@ LOGFILE_BACKUP_COUNT = config('LOGFILE_BACKUP_COUNT', cast=int, default=3)
 # Dimensions (in points) for each page on output compilation book
 PAGE_WIDTH = config('PAGE_WIDTH', default=1100, cast=int)
 PAGE_HEIGHT = config('PAGE_HEIGHT', default=850, cast=int)
+
+COVER_PATH = config('COVER_PATH', default=PROJECT_DIR / 'cover.pdf', cast=Path)

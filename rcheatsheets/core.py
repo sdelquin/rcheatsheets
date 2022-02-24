@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 import tempfile
 from itertools import islice
 from pathlib import Path
@@ -15,11 +16,18 @@ from rcheatsheets.utils import is_valid_response
 
 
 class RCheatSheet:
-    def __init__(self, url, output_dir):
-        self.url = url
-        filename = url.split('/')[-1]
-        output_path = os.path.join(output_dir, filename)
-        self.file = Path(output_path)
+    def __init__(self, /, output_dir: str, file: Path = None, url: str = None):
+        '''Available invocations:
+        - RCheatSheet(output_dir='/tmp', file='foo.pdf')
+        - RCheatSheet(output_dir='/tmp', url='https://example.com/bar.pdf')
+        '''
+        if file:
+            self.file = Path(shutil.copy(file, output_dir))
+        else:
+            self.url = url
+            filename = url.split('/')[-1]
+            output_path = os.path.join(output_dir, filename)
+            self.file = Path(output_path)
         self.path = str(self.file)
 
     @property
@@ -98,6 +106,11 @@ class Handler:
             if (url := link['href']).endswith('.pdf'):
                 yield url
 
+    def add_cover(self, output_dir, cover_path=settings.COVER_PATH):
+        logger.debug(f'Adding cover {cover_path.name}')
+        cover = RCheatSheet(output_dir=output_dir, file=cover_path)
+        self.cheatsheets.append(cover)
+
     def merge_cheatsheets(self):
         logger.info('Merging cheatsheets')
         merged_file = PyPDF2.PdfFileMerger()
@@ -105,13 +118,15 @@ class Handler:
             rcs.stage()
             merged_file.append(rcs.contents)
 
-        logger.debug(f'Writing compilation book to {self.book}')
+        logger.info(f'Writing compilation book to {self.book}')
         merged_file.write(str(self.book))
 
     def build(self):
+        logger.info('Building compilation book')
         with tempfile.TemporaryDirectory() as tmpdirname:
+            self.add_cover(output_dir=tmpdirname)
             for url in islice(self.get_cheatsheet_links(), self.max_cheatsheets):
-                rcs = RCheatSheet(url, tmpdirname)
+                rcs = RCheatSheet(output_dir=tmpdirname, url=url)
                 if rcs.download():
                     self.cheatsheets.append(rcs)
             self.merge_cheatsheets()
