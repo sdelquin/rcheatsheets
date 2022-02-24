@@ -1,4 +1,5 @@
 import re
+import tempfile
 
 import logzero
 import requests
@@ -41,3 +42,9 @@ def is_valid_response(response):
     ):
         return False, f'Incompatible Content-Type: {content_type}'
     return True, 'Success'
+
+
+def mk_tmpfile():
+    tmpfile = tempfile.NamedTemporaryFile(delete=False)
+    tmpfile.close()
+    return tmpfile.name

@@ -5,3 +5,4 @@ prettyconf
 typer
 logzero
 pikepdf
+reportlab
