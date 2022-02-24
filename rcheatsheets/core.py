@@ -60,7 +60,7 @@ class RCheatSheet:
                 self.download()
             return False
 
-    def read(self, repair):
+    def read(self, repair=False):
         logger.debug(f'Reading contents from {self}')
         if repair:
             logger.debug(f'Repairing {self}')
