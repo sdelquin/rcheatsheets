@@ -16,19 +16,21 @@ from rcheatsheets.utils import is_valid_response
 
 
 class RCheatSheet:
-    def __init__(self, /, output_dir: str, file: Path = None, url: str = None):
+    def __init__(self, /, file: Path = None, url: str = None):
         '''Available invocations:
-        - RCheatSheet(output_dir='/tmp', file='foo.pdf')
-        - RCheatSheet(output_dir='/tmp', url='https://example.com/bar.pdf')
+        - RCheatSheet(file='foo.pdf')
+        - RCheatSheet(url='https://example.com/bar.pdf')
         '''
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_file.close()
+        self.path = str(temp_file)
         if file:
-            self.file = Path(shutil.copy(file, output_dir))
+            self.name = file.name
+            shutil.copy(file, self.path)
         else:
             self.url = url
-            filename = url.split('/')[-1]
-            output_path = os.path.join(output_dir, filename)
-            self.file = Path(output_path)
-        self.path = str(self.file)
+            self.name = url.split('/')[-1]
+        self.name = self.name.split('.')[0]
 
     @property
     def github_raw_url(self):
@@ -47,7 +49,7 @@ class RCheatSheet:
         response = requests.get(self.url)
         valid_response, msg = is_valid_response(response)
         if valid_response:
-            with self.file.open('wb') as f:
+            with open(self.path, 'wb') as f:
                 f.write(response.content)
             return True
         else:
@@ -82,7 +84,10 @@ class RCheatSheet:
         self.read(repair=False)
 
     def __str__(self):
-        return self.file.name
+        return self.name
+
+    def __del__(self):
+        os.remove(self.path)
 
 
 class Handler:
@@ -106,9 +111,9 @@ class Handler:
             if (url := link['href']).endswith('.pdf'):
                 yield url
 
-    def add_cover(self, output_dir, cover_path=settings.COVER_PATH):
-        logger.debug(f'Adding cover {cover_path.name}')
-        cover = RCheatSheet(output_dir=output_dir, file=cover_path)
+    def add_cover(self, cover_path=settings.COVER_PATH):
+        logger.debug('Adding cover')
+        cover = RCheatSheet(file=cover_path)
         self.cheatsheets.append(cover)
 
     def merge_cheatsheets(self):
@@ -123,10 +128,9 @@ class Handler:
 
     def build(self):
         logger.info('Building compilation book')
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            self.add_cover(output_dir=tmpdirname)
-            for url in islice(self.get_cheatsheet_links(), self.max_cheatsheets):
-                rcs = RCheatSheet(output_dir=tmpdirname, url=url)
-                if rcs.download():
-                    self.cheatsheets.append(rcs)
-            self.merge_cheatsheets()
+        self.add_cover()
+        for url in islice(self.get_cheatsheet_links(), self.max_cheatsheets):
+            rcs = RCheatSheet(url=url)
+            if rcs.download():
+                self.cheatsheets.append(rcs)
+        self.merge_cheatsheets()
