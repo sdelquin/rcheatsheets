@@ -2,7 +2,7 @@
 
 A compilaton of **R cheatsheets** taken from https://www.rstudio.com/resources/cheatsheets/.
 
-📕&nbsp; [Get the book here!](rcheatsheets.pdf)
+📕&nbsp; [Get the book here!](https://github.com/sdelquin/rcheatsheets/raw/main/rcheatsheets.pdf)
 
 ## Features
 
