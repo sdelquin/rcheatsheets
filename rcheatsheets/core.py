@@ -28,12 +28,13 @@ class Handler:
                 yield url
 
     def make_cover(self, cover_path=settings.COVER_PATH):
-        logger.debug('Making cover')
+        logger.info('Making cover')
         self.cover = Cover(cover_path)
         self.cover.scale()
+        self.cover.add_timestamp()
 
     def make_toc(self):
-        logger.debug('Making TOC')
+        logger.info('Making table of contents')
         self.toc = TOC(self.cheatsheets)
         self.toc.scale()
 

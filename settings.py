@@ -34,6 +34,10 @@ TOC_ITEMS_PER_COLUMN = config('TOC_ITEMS_PER_COLUMN', default=30, cast=int)
 TOC_MARGIN_TOP = config('TOC_MARGIN_TOP', default=2, cast=int)
 TOC_COL_CHARS = config('TOC_COL_CHARS', default=26, cast=int)
 
+# Properties of last update message on cover
+LAST_UPDATE_XPOS = config('LAST_UPDATE_XPOS', default=75, cast=int)
+LAST_UPDATE_YPOS = config('LAST_UPDATE_YPOS', default=110, cast=int)
+LAST_UPDATE_FONTSIZE = config('LAST_UPDATE_FONTSIZE', default=18, cast=int)
 
 COVER_PATH = config('COVER_PATH', default=PROJECT_DIR / 'cover.pdf', cast=Path)
 
