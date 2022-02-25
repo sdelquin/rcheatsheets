@@ -78,7 +78,11 @@ class CheatSheet(ContentBlock):
             pagenumber = self.starting_pagenumber + i
             c.setPageSize(self.page_size)
             c.setFontSize(self.pagenumer_fontsize)
-            c.drawString(*self.pagenumber_pos, str(pagenumber))
+            c.circle(*self.pagenumber_pos, r=self.pagenumer_fontsize, fill=1)
+            c.setFillColor('white')
+            xpos, ypos = self.pagenumber_pos
+            ypos -= self.pagenumer_fontsize / 3
+            c.drawCentredString(xpos, ypos, str(pagenumber))
             c.showPage()
         c.save()
         contents = PyPDF2.PdfFileReader(tmpfile)
