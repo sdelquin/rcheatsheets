@@ -6,3 +6,5 @@ typer
 logzero
 pikepdf
 reportlab
+fpdf2
+python-slugify
