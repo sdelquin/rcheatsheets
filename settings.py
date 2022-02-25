@@ -29,15 +29,10 @@ PAGENUMBER_FONTSIZE = config('PAGENUMBER_FONTSIZE', default=16, cast=int)
 TOC_CONTENTS_XPOS = config('TOC_CONTENTS_XPOS', default=100, cast=int)
 TOC_CONTENTS_YPOS = config('TOC_CONTENTS_YPOS', default=PAGE_HEIGHT - 100, cast=int)
 
-TOC_FONTSIZE = config('TOC_FONTSIZE', default=12, cast=int)
 TOC_COLUMNS = config('TOC_COLUMNS', default=3)
 TOC_ITEMS_PER_COLUMN = config('TOC_ITEMS_PER_COLUMN', default=30, cast=int)
 TOC_MARGIN_TOP = config('TOC_MARGIN_TOP', default=2, cast=int)
-# Width (in percentage) of item column
-TOC_ITEM_COL_WIDTH = config('TOC_ITEM_COL_WIDTH', default=20, cast=int)
-# Width (in percentage) of page column
-TOC_PAGE_COL_WIDTH = config('TOC_PAGE_COL_WIDTH', default=10, cast=int)
-TOC_ITEM_WIDTH = config('TOC_ITEM_WIDTH', default=26, cast=int)
+TOC_COL_CHARS = config('TOC_COL_CHARS', default=26, cast=int)
 
 
 COVER_PATH = config('COVER_PATH', default=PROJECT_DIR / 'cover.pdf', cast=Path)
