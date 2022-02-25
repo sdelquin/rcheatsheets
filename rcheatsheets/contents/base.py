@@ -22,7 +22,8 @@ class ContentBlock:
         return PyPDF2.PdfFileReader(self.path, 'rb')
 
     def scale(self):
-        logger.debug(f'Scaling {self} to {self.page_size}pt')
+        size = 'x'.join(str(s) for s in self.page_size)
+        logger.debug(f'Scaling {self} to {size}pt')
         writer = PyPDF2.PdfFileWriter()
         for page in self.contents.pages:
             page.scaleTo(*self.page_size)

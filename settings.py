@@ -15,8 +15,9 @@ LOGFILE_SIZE = config('LOGFILE_SIZE', cast=float, default=1e6)
 LOGFILE_BACKUP_COUNT = config('LOGFILE_BACKUP_COUNT', cast=int, default=3)
 
 # Dimensions (in points) for each page on output compilation book
+# A4 aspect ratio = 0.7
 PAGE_WIDTH = config('PAGE_WIDTH', default=1100, cast=int)
-PAGE_HEIGHT = config('PAGE_HEIGHT', default=850, cast=int)
+PAGE_HEIGHT = config('PAGE_HEIGHT', default=770, cast=int)
 
 # Position (in points) where the page number will be written
 PAGENUMBER_XPOS = config('PAGENUMBER_XPOS', default=PAGE_WIDTH - 25, cast=int)
