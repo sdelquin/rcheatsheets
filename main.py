@@ -31,8 +31,8 @@ def run(
 ):
     logger.setLevel(logzero.DEBUG if verbose else logzero.INFO)
 
-    handler = Handler(book_path=book_path, max_cheatsheets=max_cheatsheets)
-    handler.build()
+    handler = Handler(book_path=book_path)
+    handler.build(max_cheatsheets)
 
 
 if __name__ == '__main__':

@@ -16,21 +16,13 @@ class CheatSheet(ContentBlock):
     def __init__(
         self,
         url: str = None,
-        starting_pagenumber=1,
         page_width=settings.PAGE_WIDTH,
         page_height=settings.PAGE_HEIGHT,
-        pagenumber_xpos=settings.PAGENUMBER_XPOS,
-        pagenumber_ypos=settings.PAGENUMBER_YPOS,
-        pagenumber_fontsize=settings.PAGENUMBER_FONTSIZE,
     ):
         self.url = url
         name = url.split('/')[-1].split('.')[0]
         path = mk_tmpfile()
         super().__init__(name, path, page_width, page_height)
-
-        self.starting_pagenumber = starting_pagenumber
-        self.pagenumber_pos = (pagenumber_xpos, pagenumber_ypos)
-        self.pagenumer_fontsize = pagenumber_fontsize
 
     @property
     def github_raw_url(self):
@@ -65,23 +57,17 @@ class CheatSheet(ContentBlock):
         pdf = pikepdf.open(self.path, allow_overwriting_input=True)
         pdf.save(self.path)
 
-    def stage(self):
-        logger.info(f'Staging {self}')
-        self.repair()
-        self.scale()
-        self.add_page_numbers()
-
-    def get_numbered_contents(self):
+    def get_numbered_contents(self, pagenumber_pos, pagenumber_fontsize):
         tmpfile = mk_tmpfile()
         c = canvas.Canvas(tmpfile)
         for i in range(len(self)):
             pagenumber = self.starting_pagenumber + i
             c.setPageSize(self.page_size)
-            c.setFontSize(self.pagenumer_fontsize)
-            c.circle(*self.pagenumber_pos, r=self.pagenumer_fontsize, fill=1)
+            c.setFontSize(pagenumber_fontsize)
+            c.circle(*pagenumber_pos, r=pagenumber_fontsize, fill=1)
             c.setFillColor('white')
-            xpos, ypos = self.pagenumber_pos
-            ypos -= self.pagenumer_fontsize / 3
+            xpos, ypos = pagenumber_pos
+            ypos -= pagenumber_fontsize / 3
             c.drawCentredString(xpos, ypos, str(pagenumber))
             c.showPage()
         c.save()
@@ -89,10 +75,18 @@ class CheatSheet(ContentBlock):
         os.remove(tmpfile)
         return contents
 
-    def add_page_numbers(self):
+    def add_page_numbers(
+        self,
+        starting_pagenumber=1,
+        pagenumber_xpos=settings.PAGENUMBER_XPOS,
+        pagenumber_ypos=settings.PAGENUMBER_YPOS,
+        pagenumber_fontsize=settings.PAGENUMBER_FONTSIZE,
+    ):
         logger.debug('Adding page numbers')
+        self.starting_pagenumber = starting_pagenumber
+        pagenumber_pos = (pagenumber_xpos, pagenumber_ypos)
         writer = PyPDF2.PdfFileWriter()
-        numbered_contents = self.get_numbered_contents()
+        numbered_contents = self.get_numbered_contents(pagenumber_pos, pagenumber_fontsize)
         for page, numbered_page in zip(self.contents.pages, numbered_contents.pages):
             page.mergePage(numbered_page)
             writer.addPage(page)

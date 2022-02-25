@@ -13,16 +13,10 @@ from rcheatsheets.contents.toc import TOC
 
 
 class Handler:
-    def __init__(
-        self,
-        url=settings.CHEATSHEETS_URL,
-        book_path=settings.BOOK_PATH,
-        max_cheatsheets=None,
-    ):
+    def __init__(self, url=settings.CHEATSHEETS_URL, book_path=settings.BOOK_PATH):
         self.url = url
         self.book = Path(book_path)
         self.cheatsheets = []
-        self.max_cheatsheets = max_cheatsheets
 
     def get_cheatsheet_links(self):
         logger.info('Downloading cheatsheets')
@@ -48,22 +42,28 @@ class Handler:
         merged_file = PyPDF2.PdfFileMerger()
         merged_file.append(self.cover.contents)
         merged_file.append(self.toc.contents)
-        for rcs in self.cheatsheets:
-            merged_file.append(rcs.contents)
+        for sheet in self.cheatsheets:
+            merged_file.append(sheet.contents)
 
         logger.info(f'Writing compilation book to {self.book}')
         merged_file.write(str(self.book))
 
-    def build(self):
+    def build(self, max_cheatsheets=None):
         logger.info('Building compilation book')
 
+        cheatsheets = [
+            CheatSheet(url) for url in islice(self.get_cheatsheet_links(), max_cheatsheets)
+        ]
+        cheatsheets.sort(key=lambda c: c.name)
+
         current_page = 1
-        for url in islice(self.get_cheatsheet_links(), self.max_cheatsheets):
-            rcs = CheatSheet(url=url, starting_pagenumber=current_page)
-            if rcs.download():
-                rcs.stage()
-                self.cheatsheets.append(rcs)
-                current_page += len(rcs)
+        for sheet in cheatsheets:
+            if sheet.download():
+                sheet.repair()
+                sheet.scale()
+                sheet.add_page_numbers(current_page)
+                self.cheatsheets.append(sheet)
+                current_page += len(sheet)
 
         self.make_cover()
         self.make_toc()
