@@ -1,6 +1,6 @@
 requests
 bs4
-pypdf2
+pypdf2==2.12.1
 prettyconf
 typer
 logzero
