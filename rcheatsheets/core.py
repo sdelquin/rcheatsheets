@@ -1,3 +1,4 @@
+import re
 from itertools import islice
 from pathlib import Path
 
@@ -22,10 +23,9 @@ class Handler:
         logger.info('Downloading cheatsheets')
         response = requests.get(self.url)
         soup = BeautifulSoup(response.content, features='html.parser')
-        download_links = soup.find_all('a', string='Download')
-        for link in download_links:
-            if (url := link['href']).endswith('.pdf'):
-                yield url
+        a_entries = soup.find_all('a', 'Link--primary', href=re.compile(r'^.*\.pdf$'))
+        for a in a_entries:
+            yield settings.GITHUB_BASE_URL + Path(a['href']).name
 
     def make_cover(self, cover_path=settings.COVER_PATH):
         logger.info('Making cover')
