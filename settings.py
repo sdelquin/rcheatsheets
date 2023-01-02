@@ -25,7 +25,7 @@ PAGE_HEIGHT = config('PAGE_HEIGHT', default=770, cast=int)
 
 # Position (in points) where the page number will be written
 PAGENUMBER_XPOS = config('PAGENUMBER_XPOS', default=PAGE_WIDTH - 25, cast=int)
-PAGENUMBER_YPOS = config('PAGENUMBER_YPOS', default=PAGE_HEIGHT - 25, cast=int)
+PAGENUMBER_YPOS = config('PAGENUMBER_YPOS', default=25, cast=int)
 
 PAGENUMBER_FONTSIZE = config('PAGENUMBER_FONTSIZE', default=16, cast=int)
 
