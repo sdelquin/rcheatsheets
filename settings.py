@@ -13,6 +13,7 @@ GITHUB_BASE_URL = config(
     default='https://raw.githubusercontent.com/rstudio/cheatsheets/main/',
 )
 BOOK_PATH = config('BOOK_PATH', default=PROJECT_DIR / (PROJECT_NAME + '.pdf'), cast=Path)
+CHEATSHEET_BLACKLIST = config('CHEATSHEET_BLACKLIST', default=[], cast=config.list)
 
 LOGFILE = config('LOGFILE', default=PROJECT_DIR / (PROJECT_NAME + '.log'), cast=Path)
 LOGFILE_SIZE = config('LOGFILE_SIZE', cast=float, default=1e6)

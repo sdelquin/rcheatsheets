@@ -25,7 +25,12 @@ class Handler:
         soup = BeautifulSoup(response.content, features='html.parser')
         a_entries = soup.find_all('a', 'Link--primary', href=re.compile(r'^.*\.pdf$'))
         for a in a_entries:
-            yield settings.GITHUB_BASE_URL + Path(a['href']).name
+            if (doc_ref := Path(a['href'])).stem not in settings.CHEATSHEET_BLACKLIST:
+                yield settings.GITHUB_BASE_URL + doc_ref.name
+            else:
+                logger.warning(
+                    f"Ignoring '{doc_ref.stem}' cheatsheet because it's blacklisted"
+                )
 
     def make_cover(self, cover_path=settings.COVER_PATH):
         logger.info('Making cover')
