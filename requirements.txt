@@ -1,10 +1,10 @@
+prettyconf
 requests
 bs4
 pypdf2==2.12.1
-prettyconf
+pikepdf==5.0.1
+reportlab==3.6.7
+fpdf2==2.5.0
 typer
 logzero
-pikepdf
-reportlab==3.6.7
-fpdf2
 python-slugify
