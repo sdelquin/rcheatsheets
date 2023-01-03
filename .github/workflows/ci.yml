@@ -18,7 +18,6 @@ jobs:
       - run: python main.py -v
         env:
           CHEATSHEET_BLACKLIST: ${{ secrets.CHEATSHEET_BLACKLIST }}
-          TOC_ITEMS_PER_COLUMN: ${{ secrets.TOC_ITEMS_PER_COLUMN }}
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update cheatsheets book
