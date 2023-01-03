@@ -5,6 +5,6 @@ prettyconf
 typer
 logzero
 pikepdf
-reportlab
+reportlab==3.6.7
 fpdf2
 python-slugify
