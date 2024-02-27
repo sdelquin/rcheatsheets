@@ -1,7 +1,7 @@
 name: CI
 on:
-  schedule:
-    - cron: "0 3 * * 2"
+  #schedule:
+  #  - cron: "0 3 * * 2"
   workflow_dispatch:
 jobs:
   rcheatsheets:
